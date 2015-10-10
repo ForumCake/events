@@ -15,8 +15,8 @@ class Model_Event extends \XenForo_Model
                 $event['end_timezone'] = $viewingUser['timezone'];
                 $timezone = new \DateTimeZone($viewingUser['timezone']);
                 $now = new \DateTime(null, $timezone);
-                $thread['start_time'] -= $now->getOffset();
-                $thread['end_time'] -= $now->getOffset();
+                $event['start_time'] -= $now->getOffset();
+                $event['end_time'] -= $now->getOffset();
             }
         }
 

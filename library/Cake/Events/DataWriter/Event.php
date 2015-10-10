@@ -165,10 +165,32 @@ abstract class DataWriter_Event extends \XenForo_DataWriter
     {
         $timeDw = $this->getTimeDw();
 
-        $allowRegularEvent = true;
-        $allowAllDayEvent = false;
-        $allowAllDayMultiple = false;
-
+        if ($this->isModuleActive('Calendars') && !empty($event['calendar_id']) && $this->isInsert()) {
+            /* @var $calendarModel Calendars\Model_Calendar */
+            $calendarModel = $this->getModelFromCache('Cake\Events\Calendars\Model_Calendar');
+        
+            $calendar = $calendarModel->getCalendarById($event['calendar_id']);
+        
+            if (!$calendar) {
+                $this->error(new \XenForo_Phrase('cake_requested_calendar_not_found'));
+            }
+            
+            // TODO add $calendar to $dw?
+            
+            $allowRegularEvent = $calendar['allow_event'];
+            $allowAllDayEvent = $calendar['allow_event_all_day'];
+            $allowAllDayMultiple = $calendar['allow_event_all_day_multiple'];
+            
+            /* @var $calendarEntryDw Calendars\DataWriter_CalendarEntry */
+            $calendarEntryDw = \XenForo_DataWriter::create('Cake\Events\Calendars\DataWriter_CalendarEntry');
+        
+            $this->_calendarEntryDw = $calendarEntryDw;
+        } else {
+            $allowRegularEvent = true;
+            $allowAllDayEvent = true;
+            $allowAllDayMultiple = true;
+        }
+        
         if (empty($event['all_day']) && $allowRegularEvent) {
             $startTime = new \DateTime(
                 $event['start_date'] . ' ' . $event['start_time_hh'] . ':' . $event['start_time_mm'],
@@ -204,23 +226,9 @@ abstract class DataWriter_Event extends \XenForo_DataWriter
                 'end_time' => $event['end_time'],
                 'end_timezone' => $event['end_timezone']
             ));
-
-        if ($this->isModuleActive('Calendars') && !empty($event['calendar_id']) && $this->isInsert()) {
-            /* @var $calendarModel Calendars\Model_Calendar */
-            $calendarModel = $this->getModelFromCache('Cake\Events\Calendars\Model_Calendar');
-
-            $calendar = $calendarModel->getCalendarById($event['calendar_id']);
-
-            if (!$calendar) {
-                $this->error(new \XenForo_Phrase('cake_requested_calendar_not_found'));
-            }
-
-            // TODO add $calendar to $dw
-
-            /* @var $calendarEntryDw Calendars\DataWriter_CalendarEntry */
-            $calendarEntryDw = \XenForo_DataWriter::create('Cake\Events\Calendars\DataWriter_CalendarEntry');
-
-            $calendarEntryDw->bulkSet(array(
+        
+        if ($this->_calendarEntryDw) {
+            $this->_calendarEntryDw->bulkSet(array(
                 'calendar_id' => $event['calendar_id'],
                 'content_type' => $this->getContentType(),
                 'first_start_time' => $event['start_time'],
@@ -229,8 +237,6 @@ abstract class DataWriter_Event extends \XenForo_DataWriter
                 'user_id' => $viewingUser['user_id'],
                 'username' => $viewingUser['username']
             ));
-
-            $this->_calendarEntryDw = $calendarEntryDw;
         }
     }
 
