@@ -7,7 +7,7 @@ class Install_FileHealthCheck extends \Cake\Install_FileHealthCheckBase
     public function getFileHashes()
     {
         return array(
-        	'library/Cake/Events/addon-Cake_Events.xml' => '9b6d9016a538bb4fcb34d89b01365fae',
+        	'library/Cake/Events/addon-Cake_Events.xml' => '00cc7b89959a500e03abefb53d44aa0a',
         	'library/Cake/Events/ControllerHelper/Event.php' => 'd53daa4e50e213cd7444a3af1cca5ac5',
         	'library/Cake/Events/DataWriter/Definition/Event.php' => '1b27803055792898c8af7f92e2dcc68b',
         	'library/Cake/Events/DataWriter/Definition/EventTime.php' => 'e63e2b59a724ad85acbae28c0ecaa90a',
