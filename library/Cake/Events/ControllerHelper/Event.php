@@ -1,7 +1,7 @@
 <?php
 namespace Cake\Events;
 
-class ControllerHelper_Event extends \XenForo_ControllerHelper_Abstract
+class ControllerHelper_Event extends \Cake\ControllerHelper_Abstract
 {
 
     /**
@@ -20,10 +20,6 @@ class ControllerHelper_Event extends \XenForo_ControllerHelper_Abstract
 
     public function getDefaultAddEventViewParams()
     {
-        $calendarId = $this->_input->filterSingle('calendar_id', \XenForo_Input::UINT);
-
-        return array(
-            'selectedCalendarId' => $calendarId
-        );
+        return array();
     }
 }
