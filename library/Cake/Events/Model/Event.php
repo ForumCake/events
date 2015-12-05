@@ -4,7 +4,7 @@ namespace Cake\Events;
 class Model_Event extends \XenForo_Model
 {
 
-    public function prepareEvent($event, array $viewingUser = null)
+    public function prepareEvent(array $event, array $viewingUser = null)
     {
         $this->standardizeViewingUserReference($viewingUser);
 
@@ -21,6 +21,17 @@ class Model_Event extends \XenForo_Model
         }
 
         return $event;
+    }
+
+    public function prepareEvents(array $events, array $viewingUser = null)
+    {
+        $this->standardizeViewingUserReference($viewingUser);
+
+        foreach ($events as &$event) {
+            $event = $this->prepareEvent($event, $viewingUser);
+        }
+
+        return $events;
     }
 
     public function getDefaultEvent(array $viewingUser = null)

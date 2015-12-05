@@ -4,7 +4,7 @@ namespace Cake\Events;
 class Helper_Date
 {
 
-    public static function getMonthsOfTheYear()
+    public static function getMonthsOfTheYear($firstMonth = 1)
     {
         $languages = \XenForo_Application::get('languages');
 
@@ -14,7 +14,7 @@ class Helper_Date
 
         $phraseCache = $defaultLanguage['phrase_cache'];
 
-        return array(
+        $months = array(
             1 => $phraseCache['month_1'],
             2 => $phraseCache['month_2'],
             3 => $phraseCache['month_3'],
@@ -28,9 +28,16 @@ class Helper_Date
             11 => $phraseCache['month_11'],
             12 => $phraseCache['month_12']
         );
+
+        for ($i = 1; $i < $firstMonth; $i ++) {
+            unset($months[$i]);
+            $months[$i] = $phraseCache['month_' . $i];
+        }
+
+        return $months;
     }
 
-    public static function getYears()
+    public static function getYears($firstMonth = 1)
     {
         $years = array();
 
@@ -39,8 +46,12 @@ class Helper_Date
 
         $currentYear = $dateTime->format('Y');
 
-        for ($i=-3; $i<=3; $i++) {
-            $years[] = $currentYear + $i;
+        for ($i = - 3; $i <= 3; $i ++) {
+            if ($firstMonth == 1) {
+                $years[$currentYear + $i] = $currentYear + $i;
+            } else {
+                $years[$currentYear + $i] = $currentYear + $i . '/' . substr($currentYear + $i + 1, -2);
+            }
         }
 
         return $years;
